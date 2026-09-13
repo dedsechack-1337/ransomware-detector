@@ -15,6 +15,7 @@
 const path = require("path");
 const fs = require("fs");
 const express = require("express");
+const multer = require("multer");
 
 const { FileMonitor } = require("./src/fileMonitor");
 const { seedCanaries } = require("./src/honeypot");
@@ -22,10 +23,18 @@ const { AnomalyScorer, generateSyntheticNormalSessions } = require("./src/statsA
 const { buildReport } = require("./src/detect");
 const { seedFiles, existingFiles, WATCH_DIR } = require("./src/simulateNormal");
 const { runAttack } = require("./src/simulateAttack");
+const { analyzeBuffer } = require("./src/uploadAnalyzer");
 
 const PORT = 5004;
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
+
+// In-memory only -- uploaded files are never written to disk, just
+// read into a Buffer, scored, and discarded when the request ends.
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25 MB
+});
 
 let attackRunning = false;
 
@@ -79,6 +88,24 @@ app.post("/api/reset", (req, res) => {
   } catch (err) {
     res.status(500).json({ error: String(err) });
   }
+});
+
+app.post("/api/analyze-upload", (req, res) => {
+  upload.single("file")(req, res, (err) => {
+    if (err) {
+      const msg = err.code === "LIMIT_FILE_SIZE" ? "File is larger than the 25MB demo limit." : String(err.message || err);
+      return res.status(400).json({ error: msg });
+    }
+    if (!req.file) {
+      return res.status(400).json({ error: "No file received." });
+    }
+    try {
+      const result = analyzeBuffer(req.file.originalname, req.file.buffer);
+      res.json(result);
+    } catch (e) {
+      res.status(500).json({ error: String(e) });
+    }
+  });
 });
 
 app.get("/health", (req, res) => {
