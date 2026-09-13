@@ -5,18 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FileGuard — Ransomware Behavior Detector</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+<canvas id="matrix-bg"></canvas>
+<div class="scanlines"></div>
 <div class="wrap">
 
   <header>
     <div class="brand">
       <div class="brand-icon">F</div>
       <div class="brand-text">
-        <h1>FileGuard</h1>
-        <div class="tag">ransomware behavior detector — node.js edition</div>
+        <h1 data-text="FILEGUARD">FILEGUARD</h1>
+        <div class="tag">// ransomware_behavior_detector.node — <span class="cursor-blink">_</span></div>
       </div>
     </div>
     <div class="verdict-pill" id="verdict-pill">
@@ -24,40 +26,15 @@
     </div>
   </header>
 
-  <div class="controls">
-    <button class="danger" id="attack-btn">Launch simulated attack</button>
-    <button id="reset-btn">Reset demo files</button>
-    <span class="watch-path" id="watch-path">watching: data/watched_directory</span>
-  </div>
-
-  <div class="risk-panel">
-    <div class="risk-gauge">
-      <svg width="104" height="104" viewBox="0 0 104 104">
-        <circle cx="52" cy="52" r="44" fill="none" stroke="#e7e2d8" stroke-width="10"/>
-        <circle id="gauge-arc" cx="52" cy="52" r="44" fill="none" stroke="#1f7a4d" stroke-width="10"
-                stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="276"
-                style="transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease;"/>
-      </svg>
-      <div class="label" id="gauge-label">0</div>
-    </div>
-    <div class="risk-info">
-      <div class="title">Overall risk score</div>
-      <div class="verdict-text" id="risk-verdict-text">Normal</div>
-      <div class="sub">Rule engine (mass rename, entropy burst, ransom note, burst rate) +
-        honeypot canary files + a statistical z-score anomaly model, combined into one score.</div>
-    </div>
-  </div>
-
-  <div class="cards" id="cards"></div>
-
-  <div class="panel">
-    <div class="panel-header"><span>Upload &amp; analyze a file</span></div>
+  <div class="panel upload-hero">
+    <div class="panel-header"><span>&gt; Upload &amp; analyze a file</span><span class="hdr-blip">live</span></div>
     <div class="panel-body">
       <label class="upload-zone" id="upload-zone" for="file-input">
+        <div class="upload-scan"></div>
         <div class="upload-icon">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
-        <div class="upload-title">Drop a file here, or click to browse</div>
+        <div class="upload-title">DROP FILE TO SCAN &mdash; OR CLICK TO BROWSE</div>
         <div class="upload-sub">Runs the same entropy + ransom-note checks the live monitor uses — nothing is written to disk, max 25MB</div>
         <input type="file" id="file-input">
       </label>
@@ -76,6 +53,32 @@
         analyzer — no real ransomware or malicious content is involved.</div>
     </div>
   </div>
+
+  <div class="controls">
+    <button class="danger" id="attack-btn">Launch simulated attack</button>
+    <button id="reset-btn">Reset demo files</button>
+    <span class="watch-path" id="watch-path">watching: data/watched_directory</span>
+  </div>
+
+  <div class="risk-panel">
+    <div class="risk-gauge">
+      <svg width="104" height="104" viewBox="0 0 104 104">
+        <circle cx="52" cy="52" r="44" fill="none" stroke="var(--line)" stroke-width="10"/>
+        <circle id="gauge-arc" cx="52" cy="52" r="44" fill="none" stroke="var(--green)" stroke-width="10"
+                stroke-linecap="round" stroke-dasharray="276" stroke-dashoffset="276"
+                style="transition: stroke-dashoffset 0.6s ease, stroke 0.3s ease; filter:drop-shadow(0 0 6px currentColor);"/>
+      </svg>
+      <div class="label" id="gauge-label">0</div>
+    </div>
+    <div class="risk-info">
+      <div class="title">Overall risk score</div>
+      <div class="verdict-text" id="risk-verdict-text">Normal</div>
+      <div class="sub">Rule engine (mass rename, entropy burst, ransom note, burst rate) +
+        honeypot canary files + a statistical z-score anomaly model, combined into one score.</div>
+    </div>
+  </div>
+
+  <div class="cards" id="cards"></div>
 
   <div class="panel">
     <div class="panel-header"><span>Alerts</span><span id="alert-count"></span></div>
@@ -113,6 +116,7 @@
   <footer>Demo attack is simulated behavior only (random-byte overwrite + rename + note drop) — no real encryption or malware involved</footer>
 </div>
 
+<script src="/matrix-bg.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

@@ -8,15 +8,15 @@ function renderGauge(risk, verdict) {
   const riskVerdictText = document.getElementById('risk-verdict-text');
 
   const offset = GAUGE_CIRC - (GAUGE_CIRC * Math.min(risk, 100) / 100);
-  let color = '#1f7a4d';
+  let color = '#35f0a4';
   let verdictLabel = 'Normal';
   let pillClass = '';
   let pillLabel = 'No threats detected';
 
   if (verdict === 'suspicious') {
-    color = '#a86a10'; verdictLabel = 'Suspicious'; pillClass = 'suspicious'; pillLabel = 'Suspicious activity';
+    color = '#ffb454'; verdictLabel = 'Suspicious'; pillClass = 'suspicious'; pillLabel = 'Suspicious activity';
   } else if (verdict === 'ransomware_likely') {
-    color = '#b3261e'; verdictLabel = 'Ransomware likely'; pillClass = 'ransomware_likely'; pillLabel = 'RANSOMWARE LIKELY';
+    color = '#ff4d5e'; verdictLabel = 'Ransomware likely'; pillClass = 'ransomware_likely'; pillLabel = 'RANSOMWARE LIKELY';
   }
 
   arc.style.stroke = color;
@@ -54,7 +54,7 @@ function renderAlerts(alerts) {
     <tr>
       <td><span class="sev ${a.severity}">${a.severity}</span></td>
       <td>${a.type.replace(/_/g, ' ')}</td>
-      <td style="color:#6b6656;">${a.detail}</td>
+      <td style="color:#8fa4b0;">${a.detail}</td>
     </tr>
   `).join('');
   body.innerHTML = `<table><thead><tr><th>Severity</th><th>Type</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -67,7 +67,7 @@ function renderSessions(sessions) {
     return;
   }
   const rows = sessions.map(s => {
-    const color = s.anomalyScore >= 60 ? '#b3261e' : s.anomalyScore >= 30 ? '#a86a10' : '#1f7a4d';
+    const color = s.anomalyScore >= 60 ? '#ff4d5e' : s.anomalyScore >= 30 ? '#ffb454' : '#35f0a4';
     const time = new Date(s.startTime * 1000).toLocaleTimeString();
     return `
     <tr>
