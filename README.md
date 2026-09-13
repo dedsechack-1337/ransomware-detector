@@ -7,6 +7,10 @@ for monitoring, a **transparent statistical anomaly scorer** (EWMA +
 z-scores) instead of a trained ML model, and an added **honeypot
 canary-file trap**.
 
+## Screenshot
+
+![FileGuard dashboard — dark techno theme, upload panel triggering a ransomware-likely verdict](docs/screenshot.png)
+
 ## How this version differs from the Python/Flask one
 
 | | Python/Flask version | This version |
@@ -16,7 +20,7 @@ canary-file trap**.
 | Web server | Flask | Express |
 | Anomaly detection | trained `IsolationForest` (scikit-learn) | online EWMA baseline + z-score, no training step |
 | Extra technique | — | honeypot/canary files |
-| Visual style | dark cyberpunk dashboard | light "forensics lab" dashboard |
+| Visual style | light "forensics lab" dashboard | dark cyberpunk/techno dashboard (neon glow, scanlines, matrix-rain backdrop) |
 
 The rule engine (mass extension change, entropy burst, ransom note,
 burst rate, delete-after-encrypt) is conceptually the same in both —
